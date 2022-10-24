@@ -117,3 +117,88 @@ int HeapSize(HP* php)
 {
 	return php->size;
 }
+
+void HeapSort(int* a, int n)
+{
+
+	for (int i = (n - 1 - 1) / 2; i >= 0; --i)
+	{
+		AdjustDown(a, n, i);
+	}
+
+	// 选数
+	int i = 1;
+	while (i < n)
+	{
+		Swap(&a[0], &a[n - i]);
+		AdjustDown(a, n - i, 0);
+		++i;
+	}
+}
+
+void CreateDataFile(const char* filename, int N)
+{
+	FILE* fin = fopen(filename, "w");
+	if (fin == NULL)
+	{
+		perror("fopen fail");
+		return;
+	}
+	srand(time(0));
+
+	for (int i = 0; i < N; ++i)
+	{
+		fprintf(fin, "%d\n", rand() % 1000000);
+	}
+
+	fclose(fin);
+}
+
+void PrintTopK(const char* filename, int k)
+{
+	assert(filename);
+
+	FILE* fout = fopen(filename, "r");
+	if (fout == NULL)
+	{
+		perror("fopen fail");
+		return;
+	}
+
+	int* minHeap = (int*)malloc(sizeof(int) * k);
+	if (minHeap == NULL)
+	{
+		perror("malloc fail");
+		return;
+	}
+	// 如何读取前K个数据
+	for (int i = 0; i < k; ++i)
+	{
+		fscanf(fout, "%d", &minHeap[i]);
+	}
+
+	// 建k个数小堆
+	for (int j = (k - 2) / 2; j >= 0; --j)
+	{
+		AdjustDown(minHeap, k, j);
+	}
+
+	// 继续读取后N-K
+	int val = 0;
+	while (fscanf(fout, "%d", &val) != EOF)
+	{
+		if (val > minHeap[0])
+		{
+			minHeap[0] = val;
+			AdjustDown(minHeap, k, 0);
+		}
+	}
+
+	for (int i = 0; i < k; ++i)
+	{
+		printf("%d ", minHeap[i]);
+	}
+
+	free(minHeap);
+	fclose(fout);
+}
