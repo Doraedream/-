@@ -10,8 +10,8 @@ void BinaryTreePrevOrder(BTNode* root)
 	}
 
 	printf("%d ", root->_data);
-	PreOrder(root->_left);
-	PreOrder(root->_right);
+	BinaryTreePrevOrder(root->_left);
+	BinaryTreePrevOrder(root->_right);
 }
 
 void BinaryTreeInOrder(BTNode* root)
